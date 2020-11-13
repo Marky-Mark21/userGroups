@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "user-groups-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/userGroups/UserGroupsWebPart.js",
+          "manifest": "./src/webparts/userGroups/UserGroupsWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "UserGroupsWebPartStrings": "lib/webparts/userGroups/loc/{locale}.js"
+  }
+}
