@@ -14,49 +14,45 @@ import { SPHttpClient } from "@microsoft/sp-http";
 
 export interface IUserGroupsWebPartProps {
   description: string;
- // userGroups: [];
 }
 
-export default class UserGroupsWebPart extends BaseClientSideWebPart<
-  IUserGroupsWebPartProps
-> {
+export default class UserGroupsWebPart extends BaseClientSideWebPart<IUserGroupsWebPartProps> {
   public state = {
     userGroupsArray: []
   }
+
   public async render(): Promise<void> {
+    this.state.userGroupsArray = [];
     var siteGroupsData = await this.context.spHttpClient.get(
       this.context.pageContext.site.absoluteUrl +
-        "/_api/web/currentuser/groups",
+      "/_api/web/currentuser/groups",
       SPHttpClient.configurations.v1
     );
 
     siteGroupsData.json().then((d) => {
-     var  siteGroups = d.value;
-      siteGroups.forEach((siteGroup) => {
+      var siteGroups = d.value;
+      siteGroups.forEach((siteGroup: { Title: any; }) => {
         console.log("SITE GROUP DATA", siteGroup.Title);
         this.state.userGroupsArray.push(siteGroup.Title);
-        return (siteGroup.Title);
       });
+      const element: React.ReactElement<IUserGroupsProps> = React.createElement(
+        UserGroups,
+        {
+          description: this.properties.description,
+          userGroups: this.state.userGroupsArray
+        }
+      );
+      ReactDom.render(element, this.domElement);
     });
-
-    const element: React.ReactElement<IUserGroupsProps> = React.createElement(
-      UserGroups,
-      {
-        description: this.properties.description
-        //userGroup : this.state.userGroupsArray
-      }
-    );
-
-    ReactDom.render(element, this.domElement);
   }
 
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
-  protected get dataVersion(): Version {
-    return Version.parse("1.0");
-  }
+  // protected get dataVersion(): Version {
+  //   return Version.parse("1.0");
+  // }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
